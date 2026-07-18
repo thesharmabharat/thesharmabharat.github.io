@@ -6,7 +6,7 @@ import { defineConfig, fontProviders } from 'astro/config';
 
 // https://astro.build/config
 export default defineConfig({
-	site: 'https://www.theundercurrentshow.com',
+	site: 'https://thesharmabharat.github.io',
 	integrations: [mdx(), sitemap()],
 	fonts: [
 		{
