@@ -1,29 +1,33 @@
 ---
-import AboutHeroImage from '../assets/blog-placeholder-about.jpg';
-import Layout from '../layouts/BlogPost.astro';
+import Desktop from '../layouts/Desktop.astro';
+import Window from '../components/Window.astro';
+import { SITE_TITLE } from '../consts';
 ---
 
-<Layout
-	title="About"
+<Desktop
+	title={`About — ${SITE_TITLE}`}
 	description="What The Undercurrent Show is about and who's behind it."
-	pubDate={new Date()}
-	heroImage={AboutHeroImage}
+	activeTitle="About"
+	activeGlyph="ℹ️"
 >
-	<p>
-		<strong>The Undercurrent Show</strong> is a space for writing about the things
-		that move quietly under the surface — the ideas, patterns, and stories that
-		shape how we live and think, but rarely make the headlines.
-	</p>
-
-	<p>
-		Here you'll find essays, notes, and long-form pieces. No algorithm, no
-		paywall, no noise — just writing, published on its own home on the web.
-	</p>
-
-	<p>
-		<em>
-			This is placeholder text. Edit it in
-			<code>src/pages/about.astro</code> to introduce yourself and the show.
-		</em>
-	</p>
-</Layout>
+	<Window title="About — The Undercurrent Show" glyph="ℹ️" statusLeft="Ready">
+		<div class="prose">
+			<h1>About</h1>
+			<p>
+				<strong>The Undercurrent Show</strong> is a space for writing about the
+				things that move quietly under the surface — the ideas, patterns, and
+				stories that shape how we live and think, but rarely make the headlines.
+			</p>
+			<p>
+				Here you'll find essays, notes, and long-form pieces. No algorithm, no
+				paywall, no noise — just writing, published on its own home on the web.
+			</p>
+			<p>
+				<em>
+					This is placeholder text. Edit it in <code>src/pages/about.astro</code>
+					to introduce yourself and the show.
+				</em>
+			</p>
+		</div>
+	</Window>
+</Desktop>

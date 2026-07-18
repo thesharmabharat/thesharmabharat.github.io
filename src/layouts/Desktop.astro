@@ -1,0 +1,104 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Taskbar from '../components/Taskbar.astro';
+
+interface Props {
+	title: string;
+	description: string;
+	activeTitle?: string;
+	activeGlyph?: string;
+}
+const { title, description, activeTitle, activeGlyph } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title={title} description={description} />
+	</head>
+	<body>
+		<a id="top"></a>
+		<div class="desktop">
+			<slot />
+		</div>
+		<Taskbar activeTitle={activeTitle} activeGlyph={activeGlyph} />
+
+		<script>
+			// --- Live taskbar clock ---
+			function tickClock() {
+				const el = document.querySelector<HTMLTimeElement>('.taskbar-clock time');
+				if (!el) return;
+				const d = new Date();
+				let h = d.getHours();
+				const m = String(d.getMinutes()).padStart(2, '0');
+				const ap = h >= 12 ? 'PM' : 'AM';
+				h = h % 12 || 12;
+				el.textContent = `${h}:${m} ${ap}`;
+			}
+			tickClock();
+			setInterval(tickClock, 10000);
+
+			// --- Start menu toggle ---
+			const startBtn = document.querySelector('.start-button');
+			const startMenu = document.querySelector('.start-menu');
+			if (startBtn && startMenu) {
+				startBtn.addEventListener('click', (e) => {
+					e.stopPropagation();
+					const open = startMenu.classList.toggle('open');
+					startBtn.classList.toggle('active', open);
+					startBtn.setAttribute('aria-expanded', String(open));
+				});
+				document.addEventListener('click', () => {
+					startMenu.classList.remove('open');
+					startBtn.classList.remove('active');
+					startBtn.setAttribute('aria-expanded', 'false');
+				});
+				startMenu.addEventListener('click', (e) => e.stopPropagation());
+			}
+
+			// --- Maximize toggle ---
+			document
+				.querySelectorAll<HTMLButtonElement>('.title-bar-controls button[aria-label="Maximize"]')
+				.forEach((btn) => {
+					btn.addEventListener('click', (e) => {
+						e.stopPropagation();
+						btn.closest('.win98-window')?.classList.toggle('maximized');
+					});
+				});
+
+			// --- Draggable windows (desktop pointers only) ---
+			if (window.matchMedia('(min-width: 721px)').matches) {
+				document.querySelectorAll<HTMLElement>('.win98-window').forEach((win) => {
+					const bar = win.querySelector<HTMLElement>('.title-bar');
+					if (!bar) return;
+					bar.style.cursor = 'move';
+					let dragging = false;
+					let startX = 0;
+					let startY = 0;
+					let tx = 0;
+					let ty = 0;
+					bar.addEventListener('pointerdown', (e) => {
+						if ((e.target as HTMLElement).closest('.title-bar-controls')) return;
+						if (win.classList.contains('maximized')) return;
+						dragging = true;
+						startX = e.clientX;
+						startY = e.clientY;
+						bar.setPointerCapture(e.pointerId);
+					});
+					bar.addEventListener('pointermove', (e) => {
+						if (!dragging) return;
+						win.style.transform = `translate(${tx + e.clientX - startX}px, ${ty + e.clientY - startY}px)`;
+					});
+					const end = (e: PointerEvent) => {
+						if (!dragging) return;
+						dragging = false;
+						tx += e.clientX - startX;
+						ty += e.clientY - startY;
+					};
+					bar.addEventListener('pointerup', end);
+					bar.addEventListener('pointercancel', end);
+				});
+			}
+		</script>
+	</body>
+</html>

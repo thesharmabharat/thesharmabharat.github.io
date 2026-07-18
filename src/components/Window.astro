@@ -1,0 +1,49 @@
+---
+interface Props {
+	title: string;
+	glyph?: string;
+	menu?: boolean;
+	statusLeft?: string;
+	statusRight?: string;
+}
+const { title, glyph = '📄', menu = true, statusLeft, statusRight } = Astro.props;
+---
+
+<div class="window win98-window">
+	<div class="title-bar">
+		<div class="title-bar-text">
+			<span class="title-glyph">{glyph}</span>{title}
+		</div>
+		<div class="title-bar-controls">
+			<button aria-label="Minimize"></button>
+			<button aria-label="Maximize"></button>
+			<a class="tb-btn" href="/" aria-label="Close"><button aria-label="Close"></button></a>
+		</div>
+	</div>
+
+	{
+		menu && (
+			<div class="menu-bar">
+				<span>File</span>
+				<span>Edit</span>
+				<span>View</span>
+				<span>Help</span>
+			</div>
+		)
+	}
+
+	<div class="window-body">
+		<div class="window-content">
+			<slot />
+		</div>
+	</div>
+
+	{
+		(statusLeft || statusRight) && (
+			<div class="status-bar">
+				<p class="status-bar-field">{statusLeft}</p>
+				{statusRight && <p class="status-bar-field">{statusRight}</p>}
+			</div>
+		)
+	}
+</div>

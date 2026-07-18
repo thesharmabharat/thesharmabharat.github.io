@@ -1,0 +1,43 @@
+---
+interface Props {
+	activeTitle?: string;
+	activeGlyph?: string;
+}
+const { activeTitle, activeGlyph = '📄' } = Astro.props;
+---
+
+<nav class="start-menu" aria-label="Start menu">
+	<div class="sidebar">The&nbsp;Undercurrent&nbsp;Show</div>
+	<ul>
+		<li><a href="/blog"><span class="glyph">📖</span> My Articles</a></li>
+		<li><a href="/about"><span class="glyph">ℹ️</span> About</a></li>
+		<li><a href="/rss.xml"><span class="glyph">📡</span> RSS Feed</a></li>
+		<li class="sep"></li>
+		<li><a href="/"><span class="glyph">🖥️</span> Desktop</a></li>
+	</ul>
+</nav>
+
+<div class="taskbar">
+	<button class="start-button" aria-haspopup="true" aria-expanded="false">
+		<svg class="win-flag" width="18" height="16" viewBox="0 0 18 16" aria-hidden="true">
+			<g transform="skewX(-6)">
+				<rect x="2" y="1" width="6" height="6" fill="#ff4747"></rect>
+				<rect x="9" y="1" width="6" height="6" fill="#5acb5a"></rect>
+				<rect x="2" y="8" width="6" height="6" fill="#4aa3ff"></rect>
+				<rect x="9" y="8" width="6" height="6" fill="#ffce3a"></rect>
+			</g>
+		</svg><span class="label">Start</span>
+	</button>
+	<div class="taskbar-divider"></div>
+	<div class="taskbar-items">
+		{
+			activeTitle && (
+				<a class="taskbar-item" href="#top">
+					<span class="glyph">{activeGlyph}</span>
+					<span>{activeTitle}</span>
+				</a>
+			)
+		}
+	</div>
+	<div class="taskbar-clock"><span>🔊</span><time>--:--</time></div>
+</div>
