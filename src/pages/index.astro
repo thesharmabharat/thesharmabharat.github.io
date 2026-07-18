@@ -1,0 +1,128 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+import { getCollection } from 'astro:content';
+import FormattedDate from '../components/FormattedDate.astro';
+
+const posts = (await getCollection('blog')).sort(
+	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
+const [latest, ...rest] = posts;
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+	</head>
+	<body>
+		<Header />
+		<main>
+			<section class="hero">
+				<h1>The Undercurrent Show</h1>
+				<p class="tagline">
+					Stories and ideas beneath the surface. Essays, notes, and long-form
+					writing on the things that move quietly under everything else.
+				</p>
+				<a class="cta" href="/blog">Read the latest &rarr;</a>
+			</section>
+
+			{latest && (
+				<section class="featured">
+					<h2 class="section-label">Latest</h2>
+					<a class="featured-card" href={`/blog/${latest.id}/`}>
+						<h3>{latest.data.title}</h3>
+						<p class="date"><FormattedDate date={latest.data.pubDate} /></p>
+						<p class="excerpt">{latest.data.description}</p>
+					</a>
+				</section>
+			)}
+
+			{rest.length > 0 && (
+				<section class="more">
+					<h2 class="section-label">More writing</h2>
+					<ul class="post-list">
+						{rest.map((post) => (
+							<li>
+								<a href={`/blog/${post.id}/`}>{post.data.title}</a>
+								<span class="date"><FormattedDate date={post.data.pubDate} /></span>
+							</li>
+						))}
+					</ul>
+				</section>
+			)}
+		</main>
+		<Footer />
+		<style>
+			.hero {
+				padding: 2rem 0 1rem;
+			}
+			.hero h1 {
+				font-size: 2.75rem;
+				margin: 0 0 0.5rem;
+			}
+			.tagline {
+				font-size: 1.15rem;
+				color: rgb(var(--gray));
+				max-width: 40ch;
+			}
+			.cta {
+				display: inline-block;
+				margin-top: 0.5rem;
+				font-weight: 700;
+			}
+			.section-label {
+				font-size: 0.85rem;
+				text-transform: uppercase;
+				letter-spacing: 0.08em;
+				color: rgb(var(--gray));
+				margin-bottom: 0.5rem;
+			}
+			.featured {
+				margin-top: 2.5rem;
+			}
+			.featured-card {
+				display: block;
+				text-decoration: none;
+				color: inherit;
+				padding: 1.25rem 1.5rem;
+				border: 1px solid rgb(var(--gray-light));
+				border-radius: 12px;
+				transition: box-shadow 0.2s ease;
+			}
+			.featured-card:hover {
+				box-shadow: var(--box-shadow);
+			}
+			.featured-card h3 {
+				margin: 0 0 0.25rem;
+				color: rgb(var(--black));
+			}
+			.more {
+				margin-top: 2.5rem;
+			}
+			.post-list {
+				list-style: none;
+				margin: 0;
+				padding: 0;
+			}
+			.post-list li {
+				display: flex;
+				justify-content: space-between;
+				align-items: baseline;
+				gap: 1rem;
+				padding: 0.6rem 0;
+				border-bottom: 1px solid rgb(var(--gray-light));
+			}
+			.date {
+				color: rgb(var(--gray));
+				font-size: 0.9rem;
+				white-space: nowrap;
+			}
+			@media (max-width: 720px) {
+				.hero h1 { font-size: 2.1rem; }
+			}
+		</style>
+	</body>
+</html>
